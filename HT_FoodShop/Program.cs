@@ -1,24 +1,27 @@
-﻿int[,] CreateRandomCustomers(int length, int openingHour, int closingHour)
+﻿// Создаем двумерный массив, где у каждого посетителя свой столбец, 
+// в первой строке указано время входа в магазин, во второй - время выхода
+// ввод в функцию: кол-во посетителей, время открытия магазина, время закрытия магазина
+int[,] CreateRandomCustomers(int length, int openingHour, int closingHour)
 {
     int[,] arr = new int[2, length];
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < length; j++)
         {
-            arr[i, j] = new Random().Next(openingHour, closingHour+1);
+            arr[i, j] = new Random().Next(openingHour, closingHour + 1); // время закрытия+1 потому что next выдает полуинтервал [...)
         }
     }
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < length; j++)
         {
-            if (arr[0, j] > arr[1, j])
+            if (arr[0, j] > arr[1, j]) // если время выхода случилось раньше входа, меняем часы местами
             {
                 int temp = arr[0, j];
                 arr[0, j] = arr[1, j];
                 arr[1, j] = temp;
             }
-            else if (arr[0, j] == arr[1, j])
+            else if (arr[0, j] == arr[1, j]) // если время входа и выхода равны, прибавляем час к времени выхода
             {
                 arr[1, j] = arr[1, j] + 1;
             }
@@ -27,7 +30,7 @@
     return arr;
 }
 
-void PrintTwoDArray(int[,] array)
+void PrintTwoDArray(int[,] array) // выводим двухмерный массив в консоль с табуляцией по столбцам
 {
     for (int i = 0; i < array.GetLength(0); i++)
     {
@@ -39,7 +42,7 @@ void PrintTwoDArray(int[,] array)
     }
 }
 
-int[] HoursInterval(int column, int[,] inputArray)
+int[] HoursInterval(int column, int[,] inputArray) // создаем массив, заполненный часами от времени входа посетителя до времени его выхода
 {
     int leftEdge = inputArray[0, column];
     int rightEdge = inputArray[1, column];
@@ -52,15 +55,15 @@ int[] HoursInterval(int column, int[,] inputArray)
     }
     return result;
 }
-
-int[,] HoursMatrixAllCustomers(int customersTotal, int[,] inputArray)
+// создаем матрицу, где столбцы - это рабочие часы магазина 
+// а строки - это строки - это каждый из посетителей
+// если посетитель находился в магазине в определенный час, вводим значение 1, если нет - 0
+int[,] HoursMatrixAllCustomers(int customersTotal, int openingHour, int closingHour, int[,] inputArray)
 {
-    int[,] customersMatrix = new int[customersTotal/* + 1*/, 13];
-    //for (int i = 0; i < 13; i++)
-    //    customersMatrix[0, i] = i + 8;
-    for (int i = /*1*/0; i < customersMatrix.GetLength(0); i++)
+    int[,] customersMatrix = new int[customersTotal, closingHour-openingHour+1];
+    for (int i = 0; i < customersMatrix.GetLength(0); i++)
     {
-        int[] arrToFill = HoursInterval(i /*- 1*/, inputArray);
+        int[] arrToFill = HoursInterval(i, inputArray);
         for (int j = 0; j < arrToFill.Length; j++)
         {
             customersMatrix[i, arrToFill[j] - 8] = 1;
@@ -69,6 +72,7 @@ int[,] HoursMatrixAllCustomers(int customersTotal, int[,] inputArray)
     return customersMatrix;
 }
 
+// вычисляем сумму единиц в каждом столбце
 int SumInColumn(int column, int[,] matrix)
 {
     int sum = 0;
@@ -79,6 +83,7 @@ int SumInColumn(int column, int[,] matrix)
     return sum;
 }
 
+// вычисляем часы, в которые в магазине находилось наибольшее количество посетителей
 void MaxFilledHours(int[,] matrix)
 {
     int[] sumVector = new int[matrix.GetLength(1)];
@@ -87,14 +92,14 @@ void MaxFilledHours(int[,] matrix)
         sumVector[i] = SumInColumn(i, matrix);
     }
     int max = 0;
-    for (int j = 0; j < sumVector.Length; j++)
+    for (int j = 0; j < sumVector.Length; j++) // находим максимальное число посетителей
     {
         if (sumVector[j] > max)
         {
             max = sumVector[j];
         }
     }
-    for (int j = 0; j < sumVector.Length; j++)
+    for (int j = 0; j < sumVector.Length; j++) // повторяем цикл, чтобы найти все часы работы, в которые было достигнуто пиковое число посетителей
     {
         if (sumVector[j] >= max)
         {
@@ -102,11 +107,11 @@ void MaxFilledHours(int[,] matrix)
         }
     }
 }
-int numberOfCustomers = 100;
+int numberOfCustomers = 15;
 int openingHour = 8;
 int closingHour = 20;
 int[,] testArray = CreateRandomCustomers(numberOfCustomers, openingHour, closingHour);
 PrintTwoDArray(testArray);
 Console.WriteLine();
-int[,] testCustomerMatrix = HoursMatrixAllCustomers(numberOfCustomers, testArray);
+int[,] testCustomerMatrix = HoursMatrixAllCustomers(numberOfCustomers, openingHour, closingHour, testArray);
 MaxFilledHours(testCustomerMatrix);
