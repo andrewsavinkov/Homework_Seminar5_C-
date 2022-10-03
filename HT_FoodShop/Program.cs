@@ -56,7 +56,7 @@ int[] HoursInterval(int column, int[,] inputArray) // создаем масси�
     return result;
 }
 // создаем матрицу, где столбцы - это рабочие часы магазина 
-// а строки - это строки - это каждый из посетителей
+// а строки - это каждый из посетителей
 // если посетитель находился в магазине в определенный час, вводим значение 1, если нет - 0
 int[,] HoursMatrixAllCustomers(int customersTotal, int openingHour, int closingHour, int[,] inputArray)
 {
@@ -107,7 +107,7 @@ void MaxFilledHours(int[,] matrix)
         }
     }
 }
-int numberOfCustomers = 15;
+int numberOfCustomers = 100;
 int openingHour = 8;
 int closingHour = 20;
 int[,] testArray = CreateRandomCustomers(numberOfCustomers, openingHour, closingHour);
